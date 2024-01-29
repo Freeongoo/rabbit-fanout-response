@@ -1,0 +1,47 @@
+version: "3.1"
+services:
+  rabbitmq:
+    container_name: rabbit_compose
+    hostname: rabbit
+    restart: always
+    image: rabbitmq:management
+#    ports:
+#      - "9672:5672"
+#      - "13672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    networks:
+      - bot-lan
+  app1:
+    depends_on:
+      - rabbitmq
+    container_name: app1
+    image: app1
+    volumes:
+      - ./app1/log:/app1/log
+      - ./app1/resources:/app1/resources
+#    ports:
+#      - "8185:8185"
+    environment:
+      SERVER_PORT: 8185
+    networks:
+      - bot-lan
+  app2:
+    depends_on:
+      - rabbitmq
+    container_name: app2
+    image: app2
+    volumes:
+      - ./app2/log:/app2/log
+      - ./app2/resources:/app2/resources
+#    ports:
+#      - "8184:8184"
+    environment:
+      SERVER_PORT: 8184
+    networks:
+      - bot-lan
+networks:
+  bot-lan:
+    driver: bridge
